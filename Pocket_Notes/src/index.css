@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.notesFolderSection {
+  min-width: 435px;
+  max-width: 435px;
+}
+
+.notesDetailsSection {
+}

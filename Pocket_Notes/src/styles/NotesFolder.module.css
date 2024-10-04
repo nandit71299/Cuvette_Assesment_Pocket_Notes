@@ -1,0 +1,18 @@
+:root {
+  --button-background-color: #16008b; /* Define your button background color */
+}
+
+.addNewButtonWrapper {
+  position: absolute;
+  bottom: 5%;
+  left: 22%;
+}
+
+.addNewButton {
+  background-color: white;
+  border-radius: 999px;
+  font-size: 70px; /* Size of the icon */
+  color: var(--button-background-color);
+  width: auto; /* Set width to auto for correct sizing */
+  height: auto; /* Set height to auto for correct sizing */
+}
