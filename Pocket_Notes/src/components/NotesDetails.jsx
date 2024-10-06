@@ -1,163 +1,197 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "../styles/NotesDetails.module.css";
-import { IoMdSend } from "react-icons/io";
+import { IoMdSend, IoMdArrowBack } from "react-icons/io";
 import notesImage from "../assets/notes.png";
 import lockImage from "../assets/lock.png";
+import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import moment from "moment";
 
 function NotesDetails({ folder }) {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("");
+  const [folderTitle, setFolderTitle] = useState("");
+  const [folderColor, setFolderColor] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const id = queryParams.get("id");
+
+  const notesContainerRef = useRef(null);
+
+  const getInitials = () => {
+    if (!folderTitle) return "";
+
+    const splitted = folderTitle.split(" ");
+
+    const initials = splitted.map((word) => word[0].toUpperCase()).join("");
+
+    return initials;
+  };
+
+  const handleResize = () => {
+    setIsMobile(window.innerWidth < 768);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     if (folder) {
+      setNotes(folder.notes);
+      setFolderTitle(folder.title);
+      setFolderColor(folder.color);
+      console.log("Folder selected:", folder);
+    } else if (id) {
       const savedFolders = JSON.parse(localStorage.getItem("folders")) || [];
-      const currentFolder = savedFolders.find((f) => f.id === folder.id);
+      const currentFolder = savedFolders.find((f) => f.id === id);
       if (currentFolder) {
         setNotes(currentFolder.notes);
+        setFolderTitle(currentFolder.title);
+        setFolderColor(currentFolder.color);
+        console.log("Current folder found in local storage:", currentFolder);
+      } else {
+        console.error("Folder not found");
+        navigate("/");
       }
     }
-  }, [folder]);
+  }, [folder, id, navigate]);
 
   const handleAddNote = () => {
     if (newNote.trim() === "") return;
 
     const newNoteObject = {
       content: newNote,
-      date: new Date().toLocaleDateString(),
-      time: new Date().toLocaleTimeString(),
+      date: moment().format("DD MMM yyyy"),
+      time: moment().format("hh:mm A"),
     };
-    debugger;
-    // Update local state
+
     const updatedNotes = [...notes, newNoteObject];
     setNotes(updatedNotes);
 
-    // Update the folder in localStorage
     const savedFolders = JSON.parse(localStorage.getItem("folders")) || [];
+
     const updatedFolders = savedFolders.map((f) =>
-      f.id === folder.id ? { ...f, notes: updatedNotes } : f
+      f.id === (folder ? folder.id : id) ? { ...f, notes: updatedNotes } : f
     );
 
-    // Save updated folders back to localStorage
     localStorage.setItem("folders", JSON.stringify(updatedFolders));
-
-    // Clear the input field
+    console.log("Updated folders saved to local storage:", updatedFolders);
     setNewNote("");
   };
 
-  if (!folder) {
+  useEffect(() => {
+    if (notesContainerRef.current) {
+      notesContainerRef.current.scrollTop =
+        notesContainerRef.current.scrollHeight;
+    }
+  }, [notes]);
+
+  if (!folder && !id) {
     return (
       <div
-        style={{ minHeight: "100vh", backgroundColor: "#DAE5F5" }}
-        className="flex-grow flex flex-col justify-center items-center h-100"
+        className={`${styles.noteDetailsSection} flex flex-col justify-center items-center h-full p-5`}
       >
-        <div className="flex-grow flex flex-col justify-center items-center">
-          <img
-            src={notesImage}
-            alt=""
-            style={{ width: "626px", height: "313px" }}
-          />
-          <h2 style={{ fontSize: "50px", fontWeight: "700" }}>Pocket Notes</h2>
-          <p style={{ fontSize: "22px", width: "650px", textAlign: "center" }}>
+        <div className="flex flex-col items-center justify-center gap-5 flex-grow content-center items-center">
+          <div className="flex justify-center items-center ">
+            <img src={notesImage} alt="" className="w-80" />
+          </div>
+          <h2 className={`${styles.pocketNotesTitle}`}>Pocket Notes</h2>
+          <p className={`${styles.pocketNotesMessage}`}>
             Send and receive messages without keeping your phone online. Use
             Pocket Notes on up to 4 linked devices and 1 mobile phone.
           </p>
         </div>
-        <div className="flex gap-2 py-5">
-          <img
-            src={lockImage}
-            alt=""
-            style={{ width: "17px", height: "21px" }}
-          />
-          <p className="text-gray-400">end-to-end encrypted</p>
+        <div className="flex items-center gap-2 mt-5">
+          <img src={lockImage} alt="lock" className="w-5" />
+          <p className={`${styles.encryptionMessage}`}>end-to-end encrypted</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <section
-        style={{ backgroundColor: "blue", minHeight: "98px" }}
-        className="flex justify-start items-center"
+    <div className={`${styles.noteDetailsSection} flex flex-col h-full`}>
+      <header
+        className={`${styles.noteDetailsHeader} p-4 bg-blue-600 text-white flex items-center`}
       >
-        <header className="sticky flex w-full p-2">
-          <ul className="list-none pl-0">
-            <li className="flex gap-5 items-center">
-              <div
-                className="flex items-center justify-center bg-blue-500 text-white rounded-full p-4"
-                style={{
-                  fontSize: "24px",
-                  minWidth: "68.9px",
-                  minHeight: "68.9px",
-                }}
-              >
-                {folder.title[0]}
-              </div>
-              <h1
-                className="text-white text-gray-700"
-                style={{ fontSize: "24px", width: "100%" }}
-              >
-                {folder.title}
-              </h1>
-            </li>
-          </ul>
-        </header>
-      </section>
+        {isMobile ? (
+          <button onClick={() => navigate("/")} className="mr-4">
+            <IoMdArrowBack className="text-white text-2xl" />
+          </button>
+        ) : null}
+        <div className="flex items-center gap-4">
+          <div
+            className={`${styles.noteDetailsIcon} flex items-center justify-center`}
+            style={{
+              backgroundColor: folderColor || "#007bff",
+            }}
+          >
+            {getInitials() || "N"}
+          </div>
+          <h1 className={styles.folderTitle}>{folderTitle || "Notes"}</h1>
+        </div>
+      </header>
 
-      <section
-        className={`${styles.noteDetailsSection} flex-grow flex px-5`}
-        style={{ height: "calc(70vh - 120px)", overflowY: "auto" }}
+      <div
+        ref={notesContainerRef}
+        className="flex-grow overflow-y-auto p-4"
+        style={{
+          height: isMobile ? "calc(100vh - 200px" : "calc(100vh - 300px)",
+          maxHeight: "calc(100vh - 150px)",
+        }}
       >
         {notes.length === 0 ? (
-          <div className="flex-grow flex flex-col justify-center items-center">
-            <p className="text-gray-500">
-              No notes available. Add a new note below.
-            </p>
-          </div>
+          <p className="text-gray-500 text-center">
+            No notes available. Add a new note below.
+          </p>
         ) : (
-          <div
-            className={`h-fit py-2 px-2 flex gap-4 flex-col w-full bg-transparent`}
-          >
-            {notes.map((note, index) => (
-              <div key={index} className={`bg-white p-4 rounded-md shadow-md`}>
-                <p className="w-auto" style={{ fontSize: "18px" }}>
-                  {note.content}
-                </p>
-                <div
-                  className="text-right w-full flex gap-2 justify-end"
-                  style={{ fontSize: "18px" }}
-                >
-                  <p className="w-auto">{note.date}</p>
-                  <p className="w-auto">•</p>
-                  <p className="w-auto">{note.time}</p>
-                </div>
+          notes.map((note, index) => (
+            <div key={index} className="bg-white p-4 rounded-md shadow-md mb-4">
+              <p className={styles.noteContent}>{note.content}</p>
+              <div className={`${styles.noteTimestamp}`}>
+                {note.date} • {note.time}
               </div>
-            ))}
-          </div>
+            </div>
+          ))
         )}
-      </section>
+      </div>
 
-      <section
-        style={{ height: "255px" }}
-        className={`${styles.noteCreationSection} px-5 py-2 text-white flex justify-self-end items-center rounded-md`}
-      >
-        <div className="relative w-full rounded-md">
+      <footer className={`${styles.noteCreationSection} p-4`}>
+        <div className="relative">
           <textarea
-            className="w-full text-black px-2 py-2 rounded-md"
-            style={{ fontSize: "29.82px" }}
+            className={`${styles.noteTextArea} w-full p-2 border rounded-md`}
             rows={4}
             value={newNote}
             onChange={(e) => setNewNote(e.target.value)}
-            placeholder="Enter your note here"
+            placeholder="Enter your text here..........."
           />
           <button
-            className="absolute right-10 bottom-8"
-            onClick={handleAddNote}
+            className={`absolute bottom-5 z-10 right-5 ${
+              newNote.length < 1 ? "disabled" : ""
+            }`}
+            onClick={() => {
+              if (newNote.length > 0) {
+                handleAddNote();
+              }
+            }}
+            disabled={newNote.length < 1}
           >
-            <IoMdSend className="text-black text-2xl" />
+            <IoMdSend
+              className={`${
+                newNote.length < 1
+                  ? styles.sendButtonDisabled
+                  : styles.sendButtonActive
+              } text-2xl`}
+            />
           </button>
         </div>
-      </section>
+      </footer>
     </div>
   );
 }

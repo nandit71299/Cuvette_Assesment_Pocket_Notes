@@ -1,0 +1,80 @@
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+.modal {
+  width: 740px;
+}
+.newGroupLabel {
+  font-size: 29px;
+  font-weight: 500;
+  line-height: 46.45px;
+}
+.groupNameLabel {
+  font-size: 27.31px;
+  font-weight: 500;
+  line-height: 43.75px;
+}
+.colorLabel {
+  font-weight: 500;
+  line-height: 43.75px;
+  font-size: 27.31px;
+}
+.createButton {
+  width: 154px;
+  height: 38px;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 32.04px;
+  background-color: #16008b;
+  border-radius: 10px;
+
+  color: white;
+}
+
+.createButtonWrapper {
+  display: flex;
+  justify-content: end;
+}
+@media only screen and (max-width: 758px) {
+  .modal {
+    max-width: 90vw !important;
+    padding: 20px !important;
+  }
+
+  .newGroupLabel {
+    font-size: 18.4px;
+    font-weight: 500;
+    line-height: 29.47px;
+  }
+
+  .groupNameLabel {
+    font-size: 14.6px;
+    font-weight: 500;
+    line-height: 23.39px;
+  }
+  .colorLabel {
+    font-size: 14.6px;
+    font-weight: 500;
+    line-height: 23.39px;
+  }
+  .createButton {
+    width: 186px;
+    color: white;
+    border-radius: 10px;
+    height: 32px;
+    background-color: #16008b;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 27.23px;
+  }
+  .createButtonWrapper {
+    display: flex;
+    justify-content: center;
+  }
+}

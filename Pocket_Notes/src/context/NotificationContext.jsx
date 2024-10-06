@@ -1,15 +1,11 @@
-// NotificationContext.js
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-// Create Notification Context
 const NotificationContext = createContext();
 
-// Custom hook to use the Notification Context
 export const useNotification = () => {
   return useContext(NotificationContext);
 };
 
-// Notification Provider Component
 export const NotificationProvider = ({ children }) => {
   const [notification, setNotification] = useState(null);
 
@@ -28,12 +24,10 @@ export const NotificationProvider = ({ children }) => {
   );
 };
 
-// Notification Component
 const Notification = ({ message }) => {
   return <div style={notificationStyle}>{message}</div>;
 };
 
-// Styles for the notification
 const notificationStyle = {
   position: "absolute",
   top: "20px",

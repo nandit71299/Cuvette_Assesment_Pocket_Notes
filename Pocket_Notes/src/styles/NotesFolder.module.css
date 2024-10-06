@@ -1,18 +1,63 @@
 :root {
-  --button-background-color: #16008b; /* Define your button background color */
+  --button-background-color: #16008b;
 }
 
-.addNewButtonWrapper {
-  position: absolute;
-  bottom: 5%;
-  left: 22%;
+.appTitle {
+  font-size: 35px;
+  font-weight: 500;
+  margin: 0;
 }
 
 .addNewButton {
+  position: absolute;
+  bottom: 5%;
+  right: 10%;
   background-color: white;
   border-radius: 999px;
-  font-size: 70px; /* Size of the icon */
+  font-size: 70px;
   color: var(--button-background-color);
-  width: auto; /* Set width to auto for correct sizing */
-  height: auto; /* Set height to auto for correct sizing */
+  width: auto;
+  height: auto;
+}
+
+.notesFolderIcon {
+  color: #fff;
+  font-size: 24px;
+  max-width: 70px;
+  min-width: 70px;
+  max-height: 70px;
+  min-height: 70px;
+}
+
+.notesFolderTitle {
+  font-weight: 500;
+  font-size: 24px;
+}
+
+.notesFolder {
+  width: 430px;
+}
+@media only screen and (max-width: 768px) {
+  .appTitle {
+    font-size: 31.52px;
+    text-align: start;
+  }
+  .notesFolderSection {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .notesFolderIcon {
+    color: #fff;
+    font-size: 24px;
+    width: 62.01px;
+    height: 62.01px;
+  }
+  .notesFolderTitle {
+    font-weight: 500;
+    font-size: 18.6px;
+  }
+  .addNewButton {
+    bottom: 2%;
+  }
 }

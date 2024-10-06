@@ -2,10 +2,65 @@
 @tailwind components;
 @tailwind utilities;
 
-.notesFolderSection {
-  min-width: 435px;
-  max-width: 435px;
+body {
+  font-family: "Roboto" !important;
 }
 
-.notesDetailsSection {
+html,
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+.container {
+  max-width: 100%;
+  padding: 0 15px;
+}
+
+textarea {
+  resize: none;
+}
+
+button {
+  cursor: pointer;
+}
+.notesFolderSection {
+  width: 430px;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .notesFolderSection {
+    width: 100%;
+    border-right: none;
+  }
+
+  .notesDetailsSection {
+    width: 100%;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #ffffff;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #ffffff;
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #d9d9d9 transparent;
 }
