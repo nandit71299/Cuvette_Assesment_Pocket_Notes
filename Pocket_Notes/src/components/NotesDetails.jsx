@@ -1,163 +1,203 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "../styles/NotesDetails.module.css";
-import { IoMdSend } from "react-icons/io";
+import { IoMdSend, IoMdArrowBack } from "react-icons/io";
 import notesImage from "../assets/notes.png";
 import lockImage from "../assets/lock.png";
+import { useNavigate, useLocation } from "react-router-dom";
+
+import {
+  getSavedFolders,
+  saveFolders,
+  formatDate,
+  formatTime,
+} from "../utils/utils";
+import NotesList from "./NotesList";
 
 function NotesDetails({ folder }) {
-  const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState("");
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768); // state to check if its mobile device
+  const [notes, setNotes] = useState([]); // state to set notes
+  const [newNote, setNewNote] = useState(""); // state managing new note's text
+  const [folderTitle, setFolderTitle] = useState(""); // state managing folder title
+  const [folderColor, setFolderColor] = useState(""); // state to manage the folder color chosen by the user
+
+  // for navigation
+  const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const id = queryParams.get("id");
+
+  //ref to scroll to the last note creatd.
+  const notesContainerRef = useRef(null);
+
+  // function to extract intials of the title, capitalize them and to join with rest of the characters.
+  const getInitials = () => {
+    if (!folderTitle) return "";
+    const splitted = folderTitle.split(" ");
+    return splitted.map((word) => word[0].toUpperCase()).join("");
+  };
+
+  const handleResize = () => {
+    setIsMobile(window.innerWidth < 768);
+  };
 
   useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // useEffect to check if folder or id exists. if yes, assign it to state vars. otherwise navigate user back to home.
+  useEffect(() => {
     if (folder) {
-      const savedFolders = JSON.parse(localStorage.getItem("folders")) || [];
-      const currentFolder = savedFolders.find((f) => f.id === folder.id);
+      setNotes(folder.notes);
+      setFolderTitle(folder.title);
+      setFolderColor(folder.color);
+    } else if (id) {
+      const savedFolders = getSavedFolders();
+      const currentFolder = savedFolders.find((f) => f.id === id);
       if (currentFolder) {
         setNotes(currentFolder.notes);
+        setFolderTitle(currentFolder.title);
+        setFolderColor(currentFolder.color);
+      } else {
+        navigate("/");
       }
     }
-  }, [folder]);
+  }, [folder, id, navigate]);
 
+  // function to add new notes to folder
   const handleAddNote = () => {
     if (newNote.trim() === "") return;
 
     const newNoteObject = {
       content: newNote,
-      date: new Date().toLocaleDateString(),
-      time: new Date().toLocaleTimeString(),
+      date: formatDate(new Date()),
+      time: formatTime(new Date()),
     };
-    debugger;
-    // Update local state
+
     const updatedNotes = [...notes, newNoteObject];
     setNotes(updatedNotes);
 
-    // Update the folder in localStorage
-    const savedFolders = JSON.parse(localStorage.getItem("folders")) || [];
+    const savedFolders = getSavedFolders();
     const updatedFolders = savedFolders.map((f) =>
-      f.id === folder.id ? { ...f, notes: updatedNotes } : f
+      f.id === (folder ? folder.id : id) ? { ...f, notes: updatedNotes } : f
     );
 
-    // Save updated folders back to localStorage
-    localStorage.setItem("folders", JSON.stringify(updatedFolders));
-
-    // Clear the input field
+    saveFolders(updatedFolders);
     setNewNote("");
   };
 
-  if (!folder) {
+  useEffect(() => {
+    if (notesContainerRef.current) {
+      notesContainerRef.current.scrollTo({
+        top: notesContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [notes]);
+
+  if (!folder && !id) {
     return (
       <div
-        style={{ minHeight: "100vh", backgroundColor: "#DAE5F5" }}
-        className="flex-grow flex flex-col justify-center items-center h-100"
+        className={`${styles.noteDetailsSection} flex flex-col justify-center items-center h-screen 5`}
       >
-        <div className="flex-grow flex flex-col justify-center items-center">
-          <img
-            src={notesImage}
-            alt=""
-            style={{ width: "626px", height: "313px" }}
-          />
-          <h2 style={{ fontSize: "50px", fontWeight: "700" }}>Pocket Notes</h2>
-          <p style={{ fontSize: "22px", width: "650px", textAlign: "center" }}>
+        <div className="flex flex-col items-center justify-center gap-5 flex-grow">
+          <div className="flex justify-center items-center">
+            <img
+              src={notesImage}
+              alt="Illustration of notes"
+              className="w-80"
+            />
+          </div>
+          <h2 className={`${styles.pocketNotesTitle}`}>Pocket Notes</h2>
+          <p className={`${styles.pocketNotesMessage} w-9/12`}>
             Send and receive messages without keeping your phone online. Use
             Pocket Notes on up to 4 linked devices and 1 mobile phone.
           </p>
         </div>
-        <div className="flex gap-2 py-5">
+        <div className="flex items-center gap-2 mt-5">
           <img
             src={lockImage}
-            alt=""
-            style={{ width: "17px", height: "21px" }}
+            alt="Lock icon indicating encryption"
+            className="w-5"
           />
-          <p className="text-gray-400">end-to-end encrypted</p>
+          <p className={`${styles.encryptionMessage}`}>end-to-end encrypted</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <section
-        style={{ backgroundColor: "blue", minHeight: "98px" }}
-        className="flex justify-start items-center"
+    <div className={`${styles.noteDetailsSection} flex flex-col h-screen`}>
+      <header
+        className={`${styles.noteDetailsHeader} p-4 bg-blue-600 text-white flex gap-2 items-center`}
       >
-        <header className="sticky flex w-full p-2">
-          <ul className="list-none pl-0">
-            <li className="flex gap-5 items-center">
-              <div
-                className="flex items-center justify-center bg-blue-500 text-white rounded-full p-4"
-                style={{
-                  fontSize: "24px",
-                  minWidth: "68.9px",
-                  minHeight: "68.9px",
-                }}
-              >
-                {folder.title[0]}
-              </div>
-              <h1
-                className="text-white text-gray-700"
-                style={{ fontSize: "24px", width: "100%" }}
-              >
-                {folder.title}
-              </h1>
-            </li>
-          </ul>
-        </header>
-      </section>
-
-      <section
-        className={`${styles.noteDetailsSection} flex-grow flex px-5`}
-        style={{ height: "calc(70vh - 120px)", overflowY: "auto" }}
-      >
-        {notes.length === 0 ? (
-          <div className="flex-grow flex flex-col justify-center items-center">
-            <p className="text-gray-500">
-              No notes available. Add a new note below.
-            </p>
-          </div>
-        ) : (
-          <div
-            className={`h-fit py-2 px-2 flex gap-4 flex-col w-full bg-transparent`}
-          >
-            {notes.map((note, index) => (
-              <div key={index} className={`bg-white p-4 rounded-md shadow-md`}>
-                <p className="w-auto" style={{ fontSize: "18px" }}>
-                  {note.content}
-                </p>
-                <div
-                  className="text-right w-full flex gap-2 justify-end"
-                  style={{ fontSize: "18px" }}
-                >
-                  <p className="w-auto">{note.date}</p>
-                  <p className="w-auto">•</p>
-                  <p className="w-auto">{note.time}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+        {isMobile && (
+          <button onClick={() => navigate("/")} aria-label="Go back">
+            <IoMdArrowBack className="text-white text-2xl" />
+          </button>
         )}
-      </section>
+        <div className="flex items-center gap-4">
+          <div
+            className={`${styles.noteDetailsIcon} flex items-center justify-center`}
+            style={{
+              backgroundColor: folderColor || "#007bff",
+            }}
+            aria-label={`Initials: ${getInitials()}`}
+          >
+            {getInitials() || "N"}
+          </div>
+          <h1
+            className={styles.folderTitle}
+            aria-label={`Folder title: ${folderTitle || "Notes"}`}
+          >
+            {folderTitle || "Notes"}
+          </h1>
+        </div>
+      </header>
 
-      <section
-        style={{ height: "255px" }}
-        className={`${styles.noteCreationSection} px-5 py-2 text-white flex justify-self-end items-center rounded-md`}
+      <div
+        ref={notesContainerRef}
+        className="flex-grow overflow-y-auto p-4"
+        style={{
+          height: isMobile ? "calc(100vh - 200px)" : "calc(100vh - 300px)",
+          maxHeight: "calc(100vh - 150px)",
+        }}
+        aria-labelledby="notes-list"
       >
-        <div className="relative w-full rounded-md">
+        <NotesList notes={notes} />
+      </div>
+
+      <footer className={`${styles.noteCreationSection} p-4`}>
+        <div className="relative">
           <textarea
-            className="w-full text-black px-2 py-2 rounded-md"
-            style={{ fontSize: "29.82px" }}
+            className={`${styles.noteTextArea} w-full p-2 border rounded-md`}
             rows={4}
             value={newNote}
             onChange={(e) => setNewNote(e.target.value)}
-            placeholder="Enter your note here"
+            placeholder="Enter your text here..........."
+            aria-label="New note input"
+            required
           />
           <button
-            className="absolute right-10 bottom-8"
+            className={`${
+              isMobile ? "bottom-10" : "bottom-5"
+            } absolute z-10 right-5 ${newNote.length < 1 ? "disabled" : ""}`}
             onClick={handleAddNote}
+            disabled={newNote.length < 1}
+            aria-label="Send note"
           >
-            <IoMdSend className="text-black text-2xl" />
+            <IoMdSend
+              className={`${
+                newNote.length < 1
+                  ? styles.sendButtonDisabled
+                  : styles.sendButtonActive
+              } text-2xl`}
+            />
           </button>
         </div>
-      </section>
+      </footer>
     </div>
   );
 }

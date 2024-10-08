@@ -1,94 +1,121 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "../styles/NotesFolder.module.css";
 import { MdOutlineAddCircle } from "react-icons/md";
 import NewNoteModal from "./NewNoteModal";
+import FolderItem from "./FolderItem";
 import { v4 as uuidv4 } from "uuid";
+import { useNavigate } from "react-router-dom";
+import { getSavedFolders, saveFolders } from "../utils/utils";
 
 function NotesFolder({ setSelectedFolder }) {
-  const [folders, setFolders] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768); // state to check if its mobile device
+  const navigate = useNavigate(); // for navigation
+  const [folders, setFolders] = useState([]); // state for note folders
+  const [isModalOpen, setIsModalOpen] = useState(false); // state to set modal open/close
+  const [selectedFolderId, setSelectedFolderId] = useState(null); // state maintaining the current selected note folder
+  const scrollToLastNoteFolder = useRef(null); // ref for scroll
+  const [newFolderCreated, setNewFolderCreated] = useState(false); // state for new folder creation. if yes, scroll to last created note folder.
+
+  const handleResize = () => {
+    setIsMobile(window.innerWidth < 768);
+  };
 
   useEffect(() => {
-    const savedFolders = JSON.parse(localStorage.getItem("folders")) || [];
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // useEffect for getting folders stored in local storage
+  useEffect(() => {
+    const savedFolders = getSavedFolders();
     setFolders(savedFolders);
   }, []);
 
+  // functions to manage open/close the modal
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
-  const getInitials = (title) => {
-    const splitted = title.split(" ");
-    return splitted.length > 1
-      ? splitted[0][0] + splitted[1][0]
-      : splitted[0][0];
-  };
-
+  // function to create a new note folder
   const handleCreateGroup = (group) => {
     const newFolder = {
       id: uuidv4(),
-      title: group.groupName,
+      title: group.groupName[0].toUpperCase() + group.groupName.slice(1),
       color: group.selectedColor,
       notes: [],
     };
 
     const updatedFolders = [...folders, newFolder];
+    saveFolders(updatedFolders);
     setFolders(updatedFolders);
-
-    // Save the updated folders to localStorage
-    localStorage.setItem("folders", JSON.stringify(updatedFolders));
-
     handleCloseModal();
     setSelectedFolder(newFolder);
+    setSelectedFolderId(newFolder.id);
+    setNewFolderCreated(true);
   };
 
+  // function to select a folder
+  const handleSelectFolder = (folder) => {
+    setSelectedFolder(folder);
+    setSelectedFolderId(folder.id);
+  };
+
+  // useEffect to scroll to last note when new folder is created
+  useEffect(() => {
+    if (newFolderCreated && scrollToLastNoteFolder.current) {
+      scrollToLastNoteFolder.current.scrollTo({
+        top: scrollToLastNoteFolder.current.scrollHeight,
+        behavior: "smooth", // Smooth scrolling
+      });
+      setNewFolderCreated(false);
+    }
+  }, [newFolderCreated, folders]);
+
   return (
-    <div className="flex flex-col h-full">
+    <div
+      className="flex flex-col h-full overflow-hidden"
+      style={{ height: isMobile ? "100vh" : "" }}
+      aria-labelledby="notes-folder"
+    >
       <section
-        style={{ minHeight: "98px" }}
-        className="flex justify-center items-end"
+        className={`${
+          isMobile ? "px-10" : "justify-center align-center"
+        } flex py-7`}
       >
-        <header className="sticky">
-          <p className="text-center" style={{ fontSize: "35px" }}>
+        <header>
+          <h1 id="notes-folder" className={`${styles.appTitle} pt-5`}>
             Pocket Notes
-          </p>
+          </h1>
         </header>
       </section>
 
       <section
-        className="mt-8 px-5"
-        style={{ maxHeight: "calc(100vh - 120px)", overflow: "scroll" }}
+        ref={scrollToLastNoteFolder}
+        className="notesFolderSection mt-3 px-5 overflow-auto"
+        style={{ maxHeight: "calc(-120px + 100vh)" }}
       >
-        <ul className="list-none pl-0">
+        <ul className="space-y-3" role="list">
           {folders.map((folder) => (
-            <li
+            <FolderItem
               key={folder.id}
-              className="flex gap-2 rounded-md items-center mb-2 hover:bg-slate-300 ease-in duration-100 py-2"
-              onClick={() => setSelectedFolder(folder)}
-            >
-              <div
-                className="flex items-center justify-center rounded-full p-4"
-                style={{
-                  backgroundColor: folder.color,
-                  color: "#fff",
-                  fontSize: "24px",
-                  minWidth: "68.9px",
-                  minHeight: "68.9px",
-                }}
-              >
-                {getInitials(folder.title)}
-              </div>
-              <span
-                className="text-gray-700 hover:text-blue-500 text-ellipsis overflow-hidden whitespace-nowrap"
-                style={{ fontSize: "24px", maxWidth: "calc(100% - 80px)" }}
-              >
-                {folder.title}
-              </span>
-            </li>
+              folder={folder}
+              selected={selectedFolderId === folder.id}
+              onSelect={() => {
+                isMobile
+                  ? navigate(`/note?id=${folder.id}`)
+                  : handleSelectFolder(folder);
+              }}
+            />
           ))}
         </ul>
       </section>
 
-      <button className={styles.addNewButtonWrapper} onClick={handleOpenModal}>
+      <button
+        className={styles.addNewButtonWrapper}
+        onClick={handleOpenModal}
+        aria-label="Add new note group"
+      >
         <MdOutlineAddCircle className={styles.addNewButton} />
       </button>
 

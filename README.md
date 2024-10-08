@@ -2,14 +2,6 @@
 
 # Notes App
 
-A simple and intuitive notes application designed to help users create, manage, and organize their notes efficiently. Built with a focus on user experience, this app allows for easy note-taking, categorization, and retrieval.
-
-## Features
-
-- **Create, Edit, and Delete Notes**: Users can easily manage their notes.
-- **Categorization**: Organize notes into different categories or tags for better organization.
-- **Search Functionality**: Quickly find notes using keywords.
-
 ## Technologies Used
 
 - **Frontend**: React.js
@@ -26,3 +18,46 @@ A simple and intuitive notes application designed to help users create, manage, 
 
 3. Start the Application
    npm start
+
+# Improvements Based on Previous Project Feedback
+
+1. **Letter Spacing Issues**
+
+   - Corrected letter spacing by implementing the values from the Figma design.
+
+2. **Font Size Adjustments**
+
+   - Resolved font size discrepancies by adhering to the specifications outlined in the Figma design.
+
+3. **Layout Adjustments (Padding and Margin)**
+
+   - Instead of solely relying on Figma, I focused on creating a visually appealing layout. I utilized Tailwind CSS classes for padding and margins to ensure consistency across devices.
+
+4. **Content Corrections**
+
+   - Updated content to align with the Figma design.
+
+5. **Improved Folder Structure**
+
+   - Organized the folder structure efficiently by creating separate components and placing styles in a dedicated "styles" folder. Context files are now housed in a "context" folder, and pages are clearly organized in a "pages" folder.
+
+6. **Naming Conventions**
+
+   - Ensured adherence to camel case naming conventions for JSX and CSS modules.
+
+7. **Addition of Semantic HTML**
+
+   - Incorporated semantic HTML elements to enhance SEO and improve accessibility for users with disabilities.
+
+8. **Inclusion of Required Attributes**
+
+   - Added necessary attributes to elements where applicable.
+
+9. **Figma Layout Compliance**
+   - Applied precise pixel dimensions from Figma for fixed-size components, sections, and pages. For other elements, I used flexible layouts with percentages to enhance responsiveness on mobile devices.
+
+**P.S**
+
+Comments are added in all the relevant files. Please see the comments to make it easier to understand the project structure.
+=======
+
