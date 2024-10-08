@@ -7,12 +7,15 @@ import { NotificationProvider } from "./context/NotificationContext";
 import NotesDetails from "./components/NotesDetails";
 
 createRoot(document.getElementById("root")).render(
-  <BrowserRouter>
-    <NotificationProvider>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/note" element={<NotesDetails />} />
-      </Routes>
-    </NotificationProvider>
-  </BrowserRouter>
+  <StrictMode>
+    <BrowserRouter>
+      <NotificationProvider>
+        <Routes>
+          {/* Main Index Page i.e HomePage */}
+          <Route path="/" element={<Index />} /> {/*  Notes Details Page*/}
+          <Route path="/note" element={<NotesDetails />} />{" "}
+        </Routes>
+      </NotificationProvider>
+    </BrowserRouter>
+  </StrictMode>
 );

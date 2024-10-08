@@ -6,6 +6,7 @@
   font-size: 35px;
   font-weight: 500;
   margin: 0;
+  line-height: 41.02px;
 }
 
 .addNewButton {
@@ -16,22 +17,24 @@
   border-radius: 999px;
   font-size: 70px;
   color: var(--button-background-color);
-  width: auto;
-  height: auto;
+  width: 93px;
+  height: 93px;
 }
 
 .notesFolderIcon {
   color: #fff;
-  font-size: 24px;
-  max-width: 70px;
-  min-width: 70px;
-  max-height: 70px;
-  min-height: 70px;
+  font-size: 23.12px;
+  max-width: 68.9px;
+  min-width: 68.9px;
+  max-height: 68.9px;
+  min-height: 68.9px;
+  font-weight: 500;
 }
 
 .notesFolderTitle {
   font-weight: 500;
   font-size: 24px;
+  line-height: 28.13px;
 }
 
 .notesFolder {
@@ -41,6 +44,7 @@
   .appTitle {
     font-size: 31.52px;
     text-align: start;
+    line-height: 36.94px;
   }
   .notesFolderSection {
     padding: 0 !important;
@@ -49,13 +53,14 @@
 
   .notesFolderIcon {
     color: #fff;
-    font-size: 24px;
+    font-size: 20px;
     width: 62.01px;
     height: 62.01px;
   }
   .notesFolderTitle {
     font-weight: 500;
     font-size: 18.6px;
+    line-height: 21.8px;
   }
   .addNewButton {
     bottom: 2%;

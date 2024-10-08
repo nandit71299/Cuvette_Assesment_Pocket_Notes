@@ -9,6 +9,9 @@
 }
 .modal {
   width: 740px;
+  height: 317px;
+  max-height: 317px;
+  max-width: 740px;
 }
 .newGroupLabel {
   font-size: 29px;
@@ -20,10 +23,27 @@
   font-weight: 500;
   line-height: 43.75px;
 }
+.newGroupInput {
+  font-size: 23px;
+  line-height: 36.84px;
+  font-weight: 400;
+  border: 2px solid #979797;
+  border-radius: 22px;
+  padding-left: 20px;
+  width: 435px;
+  height: 51px;
+  color: #979797;
+}
 .colorLabel {
   font-weight: 500;
   line-height: 43.75px;
   font-size: 27.31px;
+}
+
+.colors {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 .createButton {
   width: 154px;
@@ -41,9 +61,15 @@
   display: flex;
   justify-content: end;
 }
+
+.selected {
+  border: 2px solid black !important;
+}
+
 @media only screen and (max-width: 758px) {
   .modal {
-    max-width: 90vw !important;
+    width: 284px !important;
+    height: 211px !important;
     padding: 20px !important;
   }
 
@@ -65,16 +91,26 @@
   }
   .createButton {
     width: 186px;
-    color: white;
-    border-radius: 10px;
+    border-radius: 6px;
     height: 32px;
-    background-color: #16008b;
     font-size: 17px;
-    font-weight: 400;
     line-height: 27.23px;
   }
   .createButtonWrapper {
     display: flex;
     justify-content: center;
+  }
+  .newGroupInput {
+    font-size: 10px;
+    line-height: 16.02px;
+    border: 0.88px solid #cccccc;
+    border-radius: 22px;
+    padding-left: 10px;
+    width: 150px;
+    height: 23px;
+  }
+  .colors {
+    width: 17.67px;
+    height: 17.67px;
   }
 }
