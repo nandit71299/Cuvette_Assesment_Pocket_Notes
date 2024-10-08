@@ -15,6 +15,7 @@
   font-size: 18px;
   line-height: 28.83px;
   font-weight: 400;
+  white-space: pre-wrap;
 }
 
 .noteTextArea {

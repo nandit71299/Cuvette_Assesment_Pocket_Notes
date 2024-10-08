@@ -40,6 +40,19 @@ function NotesDetails({ folder }) {
     setIsMobile(window.innerWidth < 768);
   };
 
+  const handleEnterPress = (event) => {
+    if (event.key === "Enter") {
+      if (event.shiftKey) {
+        // Move to the next line
+        return; // Do nothing, allow new line
+      } else {
+        // Submit the note
+        handleAddNote();
+        event.preventDefault(); // Prevent default form submission
+      }
+    }
+  };
+
   useEffect(() => {
     window.addEventListener("resize", handleResize);
     return () => {
@@ -179,6 +192,7 @@ function NotesDetails({ folder }) {
             placeholder="Enter your text here..........."
             aria-label="New note input"
             required
+            onKeyDown={handleEnterPress}
           />
           <button
             className={`${

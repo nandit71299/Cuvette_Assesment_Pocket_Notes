@@ -2,6 +2,9 @@
 
 # Notes App
 
+- **Create Notes**: Users can easily create their notes.
+- **Categorization**: Organize notes into different categories or tags for better organization.
+
 ## Technologies Used
 
 - **Frontend**: React.js
@@ -58,6 +61,4 @@
 
 **P.S**
 
-Comments are added in all the relevant files. Please see the comments to make it easier to understand the project structure.
-=======
-
+# Comments are added in all the relevant files. Please see the comments to make it easier to understand the project structure.
