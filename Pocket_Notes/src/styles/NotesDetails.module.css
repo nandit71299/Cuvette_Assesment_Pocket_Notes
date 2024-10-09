@@ -9,6 +9,7 @@
 .noteDetailsHeader {
   max-height: 98px;
   background-color: #001f8b;
+  overflow: hidden;
 }
 
 .noteContent {
@@ -69,6 +70,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   width: 400px;
+  height: 40px;
+  color: white;
 }
 .sendButtonActive {
   color: #001f8b;

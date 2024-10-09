@@ -30,10 +30,14 @@ function NotesDetails({ folder }) {
   const notesContainerRef = useRef(null);
 
   // function to extract intials of the title, capitalize them and to join with rest of the characters.
-  const getInitials = () => {
-    if (!folderTitle) return "";
-    const splitted = folderTitle.split(" ");
-    return splitted.map((word) => word[0].toUpperCase()).join("");
+  const getInitials = (title) => {
+    if (!title) return "";
+
+    const splitted = title.split(" ");
+
+    return splitted.length > 1
+      ? (splitted[0][0] + splitted[1][0]).toUpperCase()
+      : (splitted[0][0] || "").toUpperCase();
   };
 
   const handleResize = () => {
@@ -161,7 +165,7 @@ function NotesDetails({ folder }) {
             }}
             aria-label={`Initials: ${getInitials()}`}
           >
-            {getInitials() || "N"}
+            {getInitials(folderTitle) || "N"}
           </div>
           <h1
             className={styles.folderTitle}
