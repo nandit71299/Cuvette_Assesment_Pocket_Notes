@@ -20,7 +20,7 @@
    npm install
 
 3. Start the Application
-   npm start
+   npm run dev
 
 # Improvements Based on Previous Project Feedback
 
