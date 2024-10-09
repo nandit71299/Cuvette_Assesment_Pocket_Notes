@@ -144,7 +144,7 @@ function NotesDetails({ folder }) {
   return (
     <div className={`${styles.noteDetailsSection} flex flex-col h-screen`}>
       <header
-        className={`${styles.noteDetailsHeader} p-4 bg-blue-600 text-white flex gap-2 items-center`}
+        className={`${styles.noteDetailsHeader} p-4 text-white flex gap-2 items-center`}
       >
         {isMobile && (
           <button onClick={() => navigate("/")} aria-label="Go back">
