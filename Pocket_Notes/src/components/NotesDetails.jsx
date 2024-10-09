@@ -110,7 +110,9 @@ function NotesDetails({ folder }) {
     }
   }, [notes]);
 
-  if (!folder && !id) {
+  if (!isMobile && id) {
+    navigate("/");
+  } else if (!folder && !id) {
     return (
       <div
         className={`${styles.noteDetailsSection} flex flex-col justify-center items-center h-screen 5`}
